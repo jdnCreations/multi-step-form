@@ -6,42 +6,68 @@ import pro from './assets/images/icon-pro.svg';
 import checkmark from './assets/images/icon-checkmark.svg';
 import { useEffect, useState } from 'react';
 
-export function AddOn(props: { title: string, subtitle: string, cost: string, addons:AddOn[], setAddons:Function}) {
+export function AddOn(props: { title: string, subtitle: string, cost: number, suffix:string, addons:AddOn[], setAddons:Function}) {
 
   const addonInfo:AddOn = {
     name: props.title,
     cost: props.cost
   }
 
+  // checks if addon is in state array
+  function isAddonAdded() {
+    for (let i = 0; i < props.addons.length; i++) {
+      if (props.addons[i].name === props.title) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  function handleAddon() {
+    if (isAddonAdded()) { 
+      // REMOVE ADDON
+      props.setAddons(props.addons.filter((addon) => addon.name !== props.title));
+    } else {
+      // ADD ADDON
+      props.setAddons([...props.addons, addonInfo]);
+    }
+  }
+
   return (
-    <div className='border border-light-gray rounded-md p-4 w-full flex gap-3 justify-between'>
-      <div className='flex gap-3 items-center'>
-        <div className='relative'>
-          <input type="checkbox" className='appearance-none border h-6 w-6 rounded-md' onClick={() => props.setAddons([...props.addons, addonInfo])}/>
-          <svg xmlns="http://www.w3.org/2000/svg" width="12" height="9" viewBox="0 0 12 9"><path fill="none" stroke="#FFF" strokeWidth="2" d="m1 4 3.433 3.433L10.866 1"/></svg>
+    <div>
+      <label className="cursor-pointer">
+        <input type="checkbox" className="peer sr-only" name="plan" checked={isAddonAdded()} onChange={handleAddon}/>
+        <div className="flex gap-3 justify-between w-full rounded-md bg-white p-4 text-light-gray transition-all hover:shadow peer-checked:bg-pastel-blue/20 peer-checked:border-purplish-blue border">
+          <div className='flex flex-col'>
+            <p className='font-bold text-marine-blue'>{props.title}</p>
+            <p className='text-cool-gray text-sm'>{props.subtitle}</p>
           </div>
-        <div className='flex flex-col'>
-          <p className='font-bold text-marine-blue'>{props.title}</p>
-          <p className='text-cool-gray text-sm'>{props.subtitle}</p>
+          <p className='text-sm self-center text-purplish-blue'>+${`${props.suffix === "mo" ? props.cost : props.cost * 10}/${props.suffix}`}</p>
         </div>
-      </div>
-      <p className='text-sm self-center text-purplish-blue'>{props.cost}</p>
+      </label>
     </div>
   )
 }
 
-export function Plan(props: { title: string, cost: number, icon: string, billing: string, setPlan:Function, plan: string, setBilling:Function, suffix: string }) {
+export function Plan(props: { title: string, cost: number, icon: string, billing: string, setPlan:Function, setPlanCost:Function, planCost:number, plan: string, setBilling:Function, suffix: string }) {
+
+  function handlePlan() {
+    props.setPlan(props.title);
+    props.setPlanCost(props.cost);
+  }
+
   return (
     <div>
       <label className="cursor-pointer">
-        <input type="radio" className="peer sr-only" name="plan" onChange={() => props.setPlan(props.title)} checked={props.plan === props.title}/>
+        <input type="radio" className="peer sr-only" name="plan" onChange={handlePlan} checked={props.plan === props.title}/>
         <div className="flex gap-3 w-full rounded-md bg-white p-4 text-light-gray transition-all hover:shadow peer-checked:bg-pastel-blue/20 peer-checked:border-purplish-blue border">
           <img src={props.icon} alt="gaming icon" />
           <div className='flex flex-col'>
             <p className='font-bold text-marine-blue'>{props.title}</p>
             <p className='text-cool-gray text-sm'>
-              ${`${props.billing === "Monthly" ? props.cost : props.cost * 10}/${props.suffix}`}
+              ${`${props.suffix === "mo" ? props.cost : props.cost * 10}/${props.suffix}`}
             </p>
+            { props.suffix === "yr" && <p className='text-sm font-medium text-marine-blue'>2 months free</p>}
           </div>
         </div>
       </label>
@@ -49,12 +75,28 @@ export function Plan(props: { title: string, cost: number, icon: string, billing
   )
 }
 
-export function Steps(props: { step:number, plan:string, billing:string, addons:AddOn[], setStep:Function, setPlan:Function, setBilling:Function, setAddons:Function, toggleBilling:Function }) {
+export function Steps(props: { step:number, plan:string, planCost:number, billing:string, addons:AddOn[], setStep:Function, setPlan:Function, setPlanCost:Function, setBilling:Function, setAddons:Function, toggleBilling:Function }) {
 
   const monthly = props.billing === "Monthly";
   const suffix = props.billing === "Monthly" ? "mo" : "yr";
+
+  function getTotal() {
+    let total = 0;
+    let addonsTotal = 0;
+    for (let i = 0; i < props.addons.length; i++) {
+      addonsTotal += props.addons[i].cost;
+    }
+
+    total = addonsTotal + props.planCost;
+
+    if (monthly)
+      return total;
+
+    return total * 10;
+  }
+
   return (
-    <>
+    <div className='mb-10'>
     {/* STEP ONE */}
     {props.step === 1 && (
       <div className="bg-white rounded-xl flex flex-col px-6 py-8 relative z-10 mt-4 gap-4 shadow-lg">
@@ -86,9 +128,9 @@ export function Steps(props: { step:number, plan:string, billing:string, addons:
       <p className="font-regular text-base text-cool-gray">You have the option of monthly or yearly billing.</p>
 
       <div className='flex flex-col justify-between gap-3'>
-        <Plan title='Arcade' cost={9} icon={arcade} plan={props.plan} billing={props.billing} setBilling={props.setBilling} setPlan={props.setPlan} suffix={suffix}/>
-        <Plan title='Advanced' cost={12} icon={advanced} plan={props.plan} billing={props.billing} setBilling={props.setBilling} setPlan={props.setPlan} suffix={suffix}/>
-        <Plan title='Pro' cost={15} icon={pro} plan={props.plan} billing={props.billing} setBilling={props.setBilling} setPlan={props.setPlan} suffix={suffix}/>
+        <Plan title='Arcade' cost={9} icon={arcade} plan={props.plan} planCost={props.planCost} billing={props.billing} setBilling={props.setBilling} setPlan={props.setPlan} setPlanCost={props.setPlanCost} suffix={suffix}/>
+        <Plan title='Advanced' cost={12} icon={advanced} plan={props.plan} planCost={props.planCost} billing={props.billing} setBilling={props.setBilling} setPlan={props.setPlan} setPlanCost={props.setPlanCost} suffix={suffix}/>
+        <Plan title='Pro' cost={15} icon={pro} plan={props.plan} planCost={props.planCost} billing={props.billing} setBilling={props.setBilling} setPlan={props.setPlan} setPlanCost={props.setPlanCost} suffix={suffix}/>
       </div>
 
       {/* Plan type (monthly or yearly) */}
@@ -110,9 +152,9 @@ export function Steps(props: { step:number, plan:string, billing:string, addons:
         <p className="font-regular text-base text-cool-gray">Add-ons help enhance your gaming experience.</p>
 
         <div className='flex flex-col justify-between gap-3'>
-          <AddOn addons={props.addons} setAddons={props.setAddons} title='Online service' subtitle='Access to multiplayer games' cost='$1/mo' />
-          <AddOn addons={props.addons} setAddons={props.setAddons} title='Larger Storage' subtitle='Extra 1TB of cloud save' cost='$2/mo' />
-          <AddOn addons={props.addons} setAddons={props.setAddons} title='Customizable profile' subtitle='Custom theme on your profile' cost='$2/mo' />
+          <AddOn addons={props.addons} setAddons={props.setAddons} title='Online service' subtitle='Access to multiplayer games' cost={1} suffix={suffix} />
+          <AddOn addons={props.addons} setAddons={props.setAddons} title='Larger Storage' subtitle='Extra 1TB of cloud save' cost={2} suffix={suffix} />
+          <AddOn addons={props.addons} setAddons={props.setAddons} title='Customizable profile' subtitle='Custom theme on your profile' cost={2} suffix={suffix} />
         </div>
       </div>
     )}
@@ -129,12 +171,14 @@ export function Steps(props: { step:number, plan:string, billing:string, addons:
               <p className='text-marine-blue font-bold'>{props.plan} ({props.billing})</p>
               <button className='self-start underline text-cool-gray' onClick={() => props.setStep(2)}>Change</button>
             </div>
-            <p className='text-marine-blue font-bold'>$9/mo</p>
+            <p className='text-marine-blue font-bold'>                ${`${suffix === "mo" ? props.planCost : props.planCost * 10}/${suffix}`}</p>
           </div>
           {props.addons.map((addon) => (
-            <div className="flex justify-between">
+            <div key={addon.name} className="flex justify-between">
               <p className='text-cool-gray'>{addon.name}</p>
-              <p className='text-marine-blue'>+{addon.cost}</p>
+              <p className='text-marine-blue'>
+                ${`${suffix === "mo" ? addon.cost : addon.cost * 10}/${suffix}`}
+              </p>
             </div>
           )
           )}
@@ -142,30 +186,27 @@ export function Steps(props: { step:number, plan:string, billing:string, addons:
         </div>
           <div className='px-4 flex justify-between'>
             <p className='text-cool-gray'>Total (per {props.billing === 'Monthly' ? 'month' : 'year'})</p>
-            <p className='text-purplish-blue font-bold'>+$12/{suffix}</p>
+            <p className='text-purplish-blue font-bold'>+${getTotal()}/{suffix}</p>
           </div>
       </div>
 
     )}
     
-  </>
+  </div>
   );
 }
 
 interface AddOn {
   name: string,
-  cost: string
+  cost: number
 }
 
 function App() {
   const [step, setStep] = useState(1);
   const [plan, setPlan] = useState('Arcade');
+  const [planCost, setPlanCost] = useState<number>(9);
   const [billing, setBilling] = useState('Monthly');
   const [addons, setAddons] = useState<Array<AddOn>>([]);
-  
-  // useEffect(() => {
-  //   console.log(plan);
-  // }, [plan]);
 
   function toggleBilling() {
     if (billing === "Monthly")
@@ -215,7 +256,7 @@ function App() {
           </div>
         </div>
 
-        <Steps step={step} plan={plan} billing={billing} addons={addons} setStep={setStep} setPlan={setPlan} setBilling={setBilling} setAddons={setAddons} toggleBilling={toggleBilling} />
+        <Steps step={step} plan={plan} planCost={planCost} billing={billing} addons={addons} setStep={setStep} setPlan={setPlan} setPlanCost={setPlanCost} setBilling={setBilling} setAddons={setAddons} toggleBilling={toggleBilling} />
       </div>
       <div className="fixed bottom-0 left-0 w-full bg-white py-9 flex items-center z-50">
         {step > 1 && (
