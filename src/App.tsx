@@ -76,7 +76,7 @@ export function Plan(props: { title: string, cost: number, icon: string, billing
   )
 }
 
-export function Steps(props: { confirmed:boolean, register:UseFormRegister<Inputs>, onSubmit:SubmitHandler<Inputs>, step:number, plan:string, planCost:number, billing:string, addons:AddOn[], setStep:Function, setPlan:Function, setPlanCost:Function, setBilling:Function, setAddons:Function, toggleBilling:Function }) {
+export function Steps(props: { confirmed:boolean, setConfirmed:Function, register:UseFormRegister<Inputs>, onSubmit:SubmitHandler<Inputs>, step:number, plan:string, planCost:number, billing:string, addons:AddOn[], setStep:Function, setPlan:Function, setPlanCost:Function, setBilling:Function, setAddons:Function, toggleBilling:Function }) {
 
    const { register, handleSubmit, watch, formState: { errors } } = useForm<Inputs>();
   const onSubmit: SubmitHandler<Inputs> = (data) => console.log(data);
@@ -100,10 +100,10 @@ export function Steps(props: { confirmed:boolean, register:UseFormRegister<Input
   }
 
   return (
-    <div className='mb-10'>
+    <div className='mb-10 md:mb-0'>
     {/* STEP ONE */}
     {props.step === 1 && (
-      <div className="bg-white rounded-xl flex flex-col px-6 py-8 relative z-10 mt-4 gap-4 shadow-lg">
+      <div className="bg-white rounded-xl flex flex-col px-6 py-8 relative z-10 mt-4 gap-4 shadow-lg md:shadow-none md:h-full md:mt-0">
         <h1 className="font-bold text-marine-blue text-2xl">Personal info</h1>
         <p className="font-regular text-base text-cool-gray">Please provide your name, email address, and phone number.</p>
 
@@ -124,11 +124,15 @@ export function Steps(props: { confirmed:boolean, register:UseFormRegister<Input
             <input {...register("phone", {required: true})} className={`${errors.phone && "border-red-500"} hover:cursor-pointer hover:border-purplish-blue text-marine-blue border rounded-md py-2 px-4 font-medium outline-none`} type="text" name="phone" placeholder='e.g. +1 234 567 890'/>
           </div>
         </form>
+          <button form='info' type='submit' className="md:block hidden absolute bottom-[1.5rem] right-[1.5rem] bg-marine-blue px-4 py-2 rounded-md text-white font-medium" 
+          onClick={
+            () => props.setStep(props.step+1)
+          }>Next Step</button>
       </div>
     )}
     {/* STEP TWO */}
     {props.step === 2 && (
-    <div className="bg-white rounded-xl flex flex-col px-6 py-8 relative z-10 mt-4 gap-4 shadow-lg">
+    <div className="bg-white rounded-xl flex flex-col px-6 py-8 relative z-10 mt-4 gap-4 shadow-lg md:shadow-none md:h-full md:mt-0">
       <h1 className="font-bold text-marine-blue text-2xl">Select your plan</h1>
       <p className="font-regular text-base text-cool-gray">You have the option of monthly or yearly billing.</p>
 
@@ -136,6 +140,7 @@ export function Steps(props: { confirmed:boolean, register:UseFormRegister<Input
         <Plan title='Arcade' cost={9} icon={arcade} plan={props.plan} planCost={props.planCost} billing={props.billing} setBilling={props.setBilling} setPlan={props.setPlan} setPlanCost={props.setPlanCost} suffix={suffix}/>
         <Plan title='Advanced' cost={12} icon={advanced} plan={props.plan} planCost={props.planCost} billing={props.billing} setBilling={props.setBilling} setPlan={props.setPlan} setPlanCost={props.setPlanCost} suffix={suffix}/>
         <Plan title='Pro' cost={15} icon={pro} plan={props.plan} planCost={props.planCost} billing={props.billing} setBilling={props.setBilling} setPlan={props.setPlan} setPlanCost={props.setPlanCost} suffix={suffix}/>
+
       </div>
 
       {/* Plan type (monthly or yearly) */}
@@ -147,12 +152,21 @@ export function Steps(props: { confirmed:boolean, register:UseFormRegister<Input
       </label>
         <p className={`${!monthly && 'text-marine-blue'}`}>Yearly</p>
       </div>
+        <div className={`md:flex absolute md:bottom-[1.5rem] left-[1rem] w-full bg-white hidden items-center z-50`}>
+        {props.step > 1 && (
+          <button className='absolute left-[1rem] font-bold text-cool-gray' onClick={() => props.setStep(props.step-1)}>Go Back</button>
+        )}
+          <button form='info' type='submit' className="absolute right-[2.5rem] bg-marine-blue px-4 py-2 rounded-md text-white font-medium" 
+          onClick={
+            () => props.setStep(props.step+1)
+          }>Next Step</button>
+      </div>
     </div>
     )}
 
     {/* STEP THREE */}
     {props.step === 3 && (
-      <div className="bg-white rounded-xl flex flex-col px-6 py-8 relative z-10 mt-4 gap-4 shadow-lg mb-20">
+      <div className="bg-white rounded-xl flex flex-col px-6 py-8 relative z-10 mt-4 gap-4 shadow-lg mb-20 md:mb-0 md:shadow-none md:h-full md:mt-0">
         <h1 className="font-bold text-marine-blue text-2xl">Pick add-ons</h1>
         <p className="font-regular text-base text-cool-gray">Add-ons help enhance your gaming experience.</p>
 
@@ -161,13 +175,23 @@ export function Steps(props: { confirmed:boolean, register:UseFormRegister<Input
           <AddOn addons={props.addons} setAddons={props.setAddons} title='Larger Storage' subtitle='Extra 1TB of cloud save' cost={2} suffix={suffix} />
           <AddOn addons={props.addons} setAddons={props.setAddons} title='Customizable profile' subtitle='Custom theme on your profile' cost={2} suffix={suffix} />
         </div>
+        <div className={`md:flex absolute md:bottom-[1.5rem] left-[1rem] w-full bg-white hidden items-center z-50`}>
+        {props.step > 1 && (
+          <button className='absolute left-[1rem] font-bold text-cool-gray' onClick={() => props.setStep(props.step-1)}>Go Back</button>
+        )}
+          <button form='info' type='submit' className="absolute right-[2.5rem] bg-marine-blue px-4 py-2 rounded-md text-white font-medium" 
+          onClick={
+            () => props.setStep(props.step+1)
+          }>Next Step</button>
+        </div>
+       
       </div>
     )}
     
 
     {/* STEP FOUR */}
     {(props.step === 4 && !props.confirmed) && (      
-      <div className="bg-white rounded-xl flex flex-col px-6 py-8 relative z-10 mt-4 gap-4 shadow-lg">
+      <div className="bg-white rounded-xl flex flex-col px-6 py-8 relative z-10 mt-4 gap-4 shadow-lg md:mt-0 md:shadow-none md:h-full">
         <h1 className="font-bold text-marine-blue text-2xl">Finishing up</h1>
         <p className="font-regular text-base text-cool-gray">Double-check everything looks OK before confirming.</p>
 
@@ -194,12 +218,16 @@ export function Steps(props: { confirmed:boolean, register:UseFormRegister<Input
             <p className='text-cool-gray'>Total (per {props.billing === 'Monthly' ? 'month' : 'year'})</p>
             <p className='text-purplish-blue font-bold'>+${getTotal()}/{suffix}</p>
           </div>
+          <div className={`absolute bottom-0 left-0 w-full bg-white py-9 flex items-center z-50`}>
+          <button className='absolute left-[1.5rem] font-bold text-cool-gray' onClick={() => props.setStep(props.step-1)}>Go Back</button>
+          <button className='absolute right-[1rem] font-bold bg-purplish-blue px-4 py-2 rounded-md text-white hover:bg-purplish-blue/75' onClick={() => props.setConfirmed(true)}>Confirm</button>
+        </div>
       </div>
     )}
 
     {/* CONFIRMED */}
     {(props.confirmed && props.step === 4) && (
-      <div className="bg-white rounded-xl flex flex-col px-6 py-20 relative z-10 mt-4 gap-4 shadow-lg items-center">
+      <div className="bg-white rounded-xl flex flex-col px-6 py-20 relative z-10 mt-4 gap-4 shadow-lg items-center justify-center md:py-0 md:mt-0 md:shadow-none md:h-full md:max-w-[500px]">
           <img src={thank} alt="" className='w-12' />
           <h1 className='text-2xl font-bold text-marine-blue'>Thank you!</h1>
           <p className='text-cool-gray text-center'>Thanks for confirming your subscription! We hope you have fun using our platform. If you ever need support, please feel free to email us at support@loremgaming.com.</p>
@@ -244,49 +272,49 @@ function App() {
   }
 
   return (
-    <div className="h-[100%] min-h-screen font-primary bg-magnolia justify-center items-center mb-10">
-      <div className="p-4">
-        <div className="px-4 py-4 flex items-center justify-center gap-4
+    <div className="h-[100%] min-h-screen font-primary items-center bg-magnolia justify-center mb-10 md:mb-0 md:flex">
+      <div className="p-4 md:flex  md:max-w-[940px] md:bg-white md:rounded-lg md:gap-12">
+        <div className="px-4 py-4 flex items-center md:relative md:block md:p-0 justify-center gap-4 md:max-w-[274px] h-full
         ">
-          <picture className="w-full absolute top-0 bg-blue-700 md:bg-black">
+          <picture className="w-full absolute md:relative top-0 md:h-full md:max-w-[100%]">
             <source media='(min-width: 768px)' srcSet={bgDesktop}></source>
             <img src={bgMobile} alt="" className='w-full'/>
           </picture>
 
-          <div className='relative flex items-center justify-center gap-4 text-white'>
-            <div className="flex gap-2 items-center">
+          <div className='relative md:absolute md:top-0 flex md:flex-col md:items-start md:pl-6 md:pt-6 items-center justify-center gap-4 text-white'>
+            <div className="flex gap-2 md:gap-4 items-center">
               <p className={`${step === 1 ? "bg-light-blue text-marine-blue border-light-blue" : "bg-transparent"} font-medium rounded-full border border-white h-8 aspect-square flex justify-center items-center`}>1</p>
-              <div className="uppercase hidden md:block">
-                <p>Step 1</p>
-                <p className="font-bold text-white">Your Info</p>
+              <div className="uppercase hidden md:flex md:flex-col">
+                <p className='text-cool-gray text-sm'>Step 1</p>
+                <p className="font-bold text-white text-sm">Your Info</p>
               </div>
             </div>
-            <div className="flex gap-2 items-center">
+            <div className="flex gap-2 md:gap-4 items-center">
               <p className={`${step === 2 ? "bg-light-blue border-light-blue text-marine-blue" : "bg-transparent"} font-medium rounded-full border border-white h-8 aspect-square flex justify-center items-center`}>2</p>
-              <div className="uppercase hidden md:block">
-                <p>Step 2</p>
-                <p className="font-bold text-white">Select Plan</p>
+              <div className="uppercase hidden md:flex md:flex-col">
+                <p className='text-cool-gray text-sm'>Step 2</p>
+                <p className="font-bold text-white text-sm">Select Plan</p>
               </div></div>
-            <div className="flex gap-2 items-center">
+            <div className="flex gap-2 md:gap-4 items-center">
               <p className={`${step === 3 ? "bg-light-blue border-light-blue text-marine-blue" : "bg-transparent"} font-medium rounded-full border border-white h-8 aspect-square flex justify-center items-center`}>3</p>
-              <div className="uppercase hidden md:block">
-                <p>Step 3</p>
-                <p className="font-bold text-white">Add-ons</p>
+              <div className="uppercase hidden md:flex md:flex-col">
+                <p className='text-cool-gray text-sm'>Step 3</p>
+                <p className="font-bold text-white text-sm">Add-ons</p>
               </div>
             </div>
-            <div className="flex gap-2 items-center">
+            <div className="flex gap-2 md:gap-4 items-center">
               <p className={`${step === 4 ? "bg-light-blue border-light-blue text-marine-blue" : "bg-transparent"} font-medium rounded-full border border-white h-8 aspect-square flex justify-center items-center`}>4</p>
-              <div className="uppercase hidden md:block">
-                <p>Step 4</p>
-                <p className="font-bold text-white">Summary</p>
+              <div className="uppercase hidden md:flex md:flex-col">
+                <p className='text-cool-gray text-sm'>Step 4</p>
+                <p className="font-bold text-white text-sm">Summary</p>
               </div>
             </div>
           </div>
         </div>
 
-        <Steps confirmed={confirmed} register={register} onSubmit={onSubmit} step={step} plan={plan} planCost={planCost} billing={billing} addons={addons} setStep={setStep} setPlan={setPlan} setPlanCost={setPlanCost} setBilling={setBilling} setAddons={setAddons} toggleBilling={toggleBilling} />
+        <Steps confirmed={confirmed} setConfirmed={setConfirmed} register={register} onSubmit={onSubmit} step={step} plan={plan} planCost={planCost} billing={billing} addons={addons} setStep={setStep} setPlan={setPlan} setPlanCost={setPlanCost} setBilling={setBilling} setAddons={setAddons} toggleBilling={toggleBilling} />
       </div>
-      <div className={`${confirmed ? "hidden" : "flex"} fixed bottom-0 left-0 w-full bg-white py-9 flex items-center z-50`}>
+      <div className={`${confirmed ? "hidden" : "flex"} md:hidden fixed bottom-0 left-0 w-full bg-white py-9 flex items-center z-50`}>
         {step > 1 && (
           <button className='absolute left-[1rem] font-bold text-cool-gray' onClick={() => setStep(step-1)}>Go Back</button>
         )}
