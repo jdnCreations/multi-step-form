@@ -7,9 +7,9 @@ import thank from './assets/images/icon-thank-you.svg';
 import {  useState } from 'react';
 import { useForm, SubmitHandler, UseFormRegister } from 'react-hook-form';
 
-export function AddOn(props: { title: string, subtitle: string, cost: number, suffix:string, addons:AddOn[], setAddons:Function}) {
+export function AddOn(props: { title: string, subtitle: string, cost: number, suffix:string, addons:IAddOn[], setAddons:Function}) {
 
-  const addonInfo:AddOn = {
+  const addonInfo:IAddOn = {
     name: props.title,
     cost: props.cost
   }
@@ -76,7 +76,7 @@ export function Plan(props: { title: string, cost: number, icon: string, billing
   )
 }
 
-export function Steps(props: { confirmed:boolean, setConfirmed:Function, register:UseFormRegister<Inputs>, onSubmit:SubmitHandler<Inputs>, step:number, plan:string, planCost:number, billing:string, addons:AddOn[], setStep:Function, setPlan:Function, setPlanCost:Function, setBilling:Function, setAddons:Function, toggleBilling:Function }) {
+export function Steps(props: { confirmed:boolean, setConfirmed:Function, register:UseFormRegister<Inputs>, onSubmit:SubmitHandler<Inputs>, step:number, plan:string, planCost:number, billing:string, addons:IAddOn[], setStep:Function, setPlan:Function, setPlanCost:Function, setBilling:Function, setAddons:Function, toggleBilling:Function }) {
 
    const { register, handleSubmit, formState: { errors } } = useForm<Inputs>();
   const onSubmit: SubmitHandler<Inputs> = (data) => console.log(data);
@@ -238,7 +238,7 @@ export function Steps(props: { confirmed:boolean, setConfirmed:Function, registe
   );
 }
 
-interface AddOn {
+interface IAddOn {
   name: string,
   cost: number
 }
@@ -254,10 +254,10 @@ function App() {
   const [plan, setPlan] = useState('Arcade');
   const [planCost, setPlanCost] = useState<number>(9);
   const [billing, setBilling] = useState('Monthly');
-  const [addons, setAddons] = useState<Array<AddOn>>([]);
+  const [addons, setAddons] = useState<Array<IAddOn>>([]);
   const [confirmed, setConfirmed] = useState(false);
 
-  const { register, formState: { errors } } = useForm<Inputs>();
+  const { register } = useForm<Inputs>();
   const onSubmit: SubmitHandler<Inputs> = (data) => console.log(data);
 
   function toggleBilling() {
