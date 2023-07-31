@@ -78,7 +78,7 @@ export function Plan(props: { title: string, cost: number, icon: string, billing
 
 export function Steps(props: { confirmed:boolean, setConfirmed:Function, register:UseFormRegister<Inputs>, onSubmit:SubmitHandler<Inputs>, step:number, plan:string, planCost:number, billing:string, addons:AddOn[], setStep:Function, setPlan:Function, setPlanCost:Function, setBilling:Function, setAddons:Function, toggleBilling:Function }) {
 
-   const { register, handleSubmit, watch, formState: { errors } } = useForm<Inputs>();
+   const { register, handleSubmit, formState: { errors } } = useForm<Inputs>();
   const onSubmit: SubmitHandler<Inputs> = (data) => console.log(data);
 
   const monthly = props.billing === "Monthly";
@@ -257,7 +257,7 @@ function App() {
   const [addons, setAddons] = useState<Array<AddOn>>([]);
   const [confirmed, setConfirmed] = useState(false);
 
-  const { register, handleSubmit, watch, formState: { errors } } = useForm<Inputs>();
+  const { register, formState: { errors } } = useForm<Inputs>();
   const onSubmit: SubmitHandler<Inputs> = (data) => console.log(data);
 
   function toggleBilling() {
