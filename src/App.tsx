@@ -38,7 +38,7 @@ export function AddOn(props: { title: string, subtitle: string, cost: number, su
     <div>
       <label className="cursor-pointer">
         <input type="checkbox" className="peer sr-only" name="plan" checked={isAddonAdded()} onChange={handleAddon}/>
-        <div className="flex gap-3 justify-between w-full rounded-md bg-white p-4 text-light-gray transition-all hover:shadow peer-checked:bg-pastel-blue/20 peer-checked:border-purplish-blue border">
+        <div className="flex gap-3 justify-between w-full rounded-md bg-white p-4 text-light-gray transition-all hover:border-purplish-blue peer-checked:bg-pastel-blue/20 peer-checked:border-purplish-blue border">
           <div className='flex flex-col'>
             <p className='font-bold text-marine-blue'>{props.title}</p>
             <p className='text-cool-gray text-sm'>{props.subtitle}</p>
@@ -61,7 +61,7 @@ export function Plan(props: { title: string, cost: number, icon: string, billing
     <div>
       <label className="cursor-pointer">
         <input type="radio" className="peer sr-only" name="plan" onChange={handlePlan} checked={props.plan === props.title}/>
-        <div className="flex gap-3 w-full rounded-md bg-white p-4 text-light-gray transition-all hover:shadow peer-checked:bg-pastel-blue/20 peer-checked:border-purplish-blue border">
+        <div className="flex gap-3 w-full rounded-md bg-white p-4 text-light-gray transition-all hover:border-purplish-blue peer-checked:bg-pastel-blue/20 peer-checked:border-purplish-blue border">
           <img src={props.icon} alt="gaming icon" />
           <div className='flex flex-col'>
             <p className='font-bold text-marine-blue'>{props.title}</p>
@@ -110,18 +110,18 @@ export function Steps(props: { confirmed:boolean, register:UseFormRegister<Input
         <form onSubmit={handleSubmit(onSubmit)} id="info" className="flex flex-col gap-3">
           <div className="flex flex-col">
             <label className="text-marine-blue text-sm" htmlFor="name">Name</label>
-            <input {...register("name", { required: true})} aria-invalid={errors.name ? "true" : "false"} className={`${errors.name && "border-red-500"} border rounded-md py-2 px-4 font-medium outline-none`} type="text" name="name" placeholder='e.g. Stephen King'/>
+            <input {...register("name", { required: true})} aria-invalid={errors.name ? "true" : "false"} className={`${errors.name && "border-red-500"} hover:cursor-pointer hover:border-purplish-blue text-marine-blue border rounded-md py-2 px-4 font-medium outline-none`} type="text" name="name" placeholder='e.g. Stephen King'/>
             {errors.name && <p>{errors.name?.message}</p>}
           </div>
 
           <div className="flex flex-col">
             <label className="text-marine-blue text-sm" htmlFor="email">Email</label>
-            <input {...register("email", {required: true})} className={`${errors.email && "border-red-500"} border rounded-md py-2 px-4 font-medium outline-none`} type="text" name="email" placeholder='e.g. stephenking@lorem.com'/>
+            <input {...register("email", {required: true})} className={`${errors.email && "border-red-500"} hover:cursor-pointer hover:border-purplish-blue text-marine-blue border rounded-md py-2 px-4 font-medium outline-none`} type="text" name="email" placeholder='e.g. stephenking@lorem.com'/>
           </div>
 
           <div className="flex flex-col">
             <label className="text-marine-blue text-sm" htmlFor="phone">Phone</label>
-            <input {...register("phone", {required: true})} className={`${errors.phone && "border-red-500"} border rounded-md py-2 px-4 font-medium outline-none`} type="text" name="phone" placeholder='e.g. +1 234 567 890'/>
+            <input {...register("phone", {required: true})} className={`${errors.phone && "border-red-500"} hover:cursor-pointer hover:border-purplish-blue text-marine-blue border rounded-md py-2 px-4 font-medium outline-none`} type="text" name="phone" placeholder='e.g. +1 234 567 890'/>
           </div>
         </form>
       </div>
@@ -175,7 +175,7 @@ export function Steps(props: { confirmed:boolean, register:UseFormRegister<Input
           <div className='flex justify-between items-center border-b pb-2'>
             <div className="flex flex-col">
               <p className='text-marine-blue font-bold'>{props.plan} ({props.billing})</p>
-              <button className='self-start underline text-cool-gray' onClick={() => props.setStep(2)}>Change</button>
+              <button className='self-start underline text-cool-gray hover:text-purplish-blue' onClick={() => props.setStep(2)}>Change</button>
             </div>
             <p className='text-marine-blue font-bold'>                ${`${suffix === "mo" ? props.planCost : props.planCost * 10}/${suffix}`}</p>
           </div>
@@ -291,7 +291,7 @@ function App() {
           <button className='absolute left-[1rem] font-bold text-cool-gray' onClick={() => setStep(step-1)}>Go Back</button>
         )}
         {step === 4 ? (
-          <button className='absolute right-[1rem] font-bold bg-purplish-blue px-4 py-2 rounded-md text-white' onClick={handleConfirm}>Confirm</button>
+          <button className='absolute right-[1rem] font-bold bg-purplish-blue px-4 py-2 rounded-md text-white hover:bg-purplish-blue/75' onClick={handleConfirm}>Confirm</button>
         ) : (
           <button form='info' type='submit' className="absolute right-[1rem] bg-marine-blue px-4 py-2 rounded-md text-white font-medium" 
           onClick={
